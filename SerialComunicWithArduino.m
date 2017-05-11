@@ -18,11 +18,10 @@ fopen(porta_serial);
 %procurada;
 %pause(2);
 
-while (fscanf(porta_serial,'%s')~= 'SIM') 
+while ( ~(strcmp (fscanf(porta_serial,'%s'),'SIM')) ) 
     disp ('Esperando SIM');
-    clc;
 end
-fprintf (serial_porta,'%s','ACK');
+%fprintf (serial_porta,'%s','ACK');
 
     
     

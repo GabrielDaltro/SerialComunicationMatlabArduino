@@ -10,9 +10,7 @@ String ACK = "NULL";
 
 void setup()
 {
-
-    
-  
+ 
     pinMode(ledPin, OUTPUT);      // sets the digital pin as output
     pinMode(ledA, OUTPUT);
     pinMode(ledV1, OUTPUT);
@@ -28,12 +26,12 @@ void setup()
       digitalWrite (ledA,HIGH);
     } 
   */    
-              
+  Serial.print ("SIM");             
 }
 
 void loop()
 {
-
+  /*
    while (ACK != "ACK") // NÃO DÁ CERTO - ESTOURA O BUFFER - TENTAR USAR TIME OUT
     {
       Serial.print ("SIM");
@@ -42,7 +40,8 @@ void loop()
         ACK = Serial.readString();  
       }
     }
-  
+    */
+   
    if (Serial.available() > 0)
    {
       digitalWrite (ledA, HIGH); 
