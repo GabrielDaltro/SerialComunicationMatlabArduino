@@ -1,65 +1,59 @@
-int ledPin = 13;                 
-int ledA = 8; 
-int ledV1 = 9; 
-int ledV2 = 10;  
-char dadosChar = 'b';  
-byte dadosByte = 0;             
+                
+int ledA = 8; // Pino do LED amarelo conectado ao pino 8 do arduino
+int ledVERD = 9; // Pino do LED verde conectado ao pino 9 do arduino
+int ledVERM = 10; // Pino do LED verde conectado ao pino 10 do arduino
 
-String SIM = "SIM";
-String ACK = "NULL";
+byte dadosByte = 0; // Variável que armazena os dados recebidos do matlab             
 
 void setup()
-{
- 
-    pinMode(ledPin, OUTPUT);      // sets the digital pin as output
+{ 
+   // define os pinos do arduino conectados aos leds como saída
     pinMode(ledA, OUTPUT);
-    pinMode(ledV1, OUTPUT);
-    pinMode(ledV2, OUTPUT);
-    
-    digitalWrite(ledPin, LOW);    // sets the LED off
-    digitalWrite(ledA, LOW);    // sets the LED off
-    digitalWrite(ledV1, LOW);    // sets the LED off
-    digitalWrite(ledV2, LOW);    // sets the LED off
-    
+    pinMode(ledVERD, OUTPUT);
+    pinMode(ledVERM, OUTPUT);
+
+    // Escreve 0 nos pinos conectados aos LED para garantir que ele iniciem apagados
+    digitalWrite(ledA, LOW);   
+    digitalWrite(ledVERD, LOW);    
+    digitalWrite(ledVERM, LOW);   
+
+    //Configura a porta serial para a taxa de transmissão de 9600 bits/s
     Serial.begin (9600);
-  /* while (!Serial){
-      digitalWrite (ledA,HIGH);
-    } 
-  */    
-  Serial.print ("SIM");             
+
+   // Envia o string "SIM" para o matlab para indicar que a porta serial já foi incializada
+   //Ao reeber "SIM", o matlab sabe que já pode enviar e receber dados do arduino
+    Serial.print ("SIM");             
 }
 
 void loop()
 {
-  /*
-   while (ACK != "ACK") // NÃO DÁ CERTO - ESTOURA O BUFFER - TENTAR USAR TIME OUT
-    {
-      Serial.print ("SIM");
-      if (Serial.available() > 0)
-      {
-        ACK = Serial.readString();  
-      }
-    }
-    */
-   
-   if (Serial.available() > 0)
+     
+   if (Serial.available() > 0) // Condição válida quando o arduino recebe algum byte
    {
-      digitalWrite (ledA, HIGH); 
-      digitalWrite(ledV1, HIGH);
-      delay(500);
-      digitalWrite(ledV1, LOW);
-      dadosByte = Serial.read();
-      if (dadosByte == 1)
-      {
-        digitalWrite(ledV2, HIGH);
-        //delay(1);
-        Serial.write (10);
+      dadosByte = Serial.read(); // Lê os dados recebidos 
+      switch (dadosByte)  // Switch que define qual LED irá acender
+        {                 // Ao acender algum LED, o arduino envia ao matlab um string confirmando que o LED selecionado foi aceso
+          case 1:
+            digitalWrite(ledA, HIGH);   
+            digitalWrite(ledVERD, LOW);    
+            digitalWrite(ledVERM, LOW);  
+            Serial.println ("LED_AMARELO_ACESO"); 
+            break;
+          case 2:
+            digitalWrite(ledA, LOW);   
+            digitalWrite(ledVERD, HIGH);    
+            digitalWrite(ledVERM, LOW);   
+            Serial.println ("LED_VERDE_ACESO"); 
+            break;
+          case 3:
+            digitalWrite(ledA, LOW);   
+            digitalWrite(ledVERD, LOW);    
+            digitalWrite(ledVERM, HIGH);  
+            Serial.println ("LED_VERMELHO_ACESO");  
+            break;  
+          default: 
+             Serial.println ("ERRO!");  
+          break;
       }
-      else
-      {
-         digitalWrite(ledV2, LOW);
-         //delay(1000);
-         Serial.write (20);
-      }  
    }          
 }

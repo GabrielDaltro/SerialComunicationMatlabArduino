@@ -1,74 +1,74 @@
-%Com do Arduino
-%Características:
+%Autor: Gabriel Daltro Duarte
+%Data: 12 de maio de 2017
+%Local: João Pessoa
+
+%Descrição:
+%Este script do matlab envia os números 1(amarelo), 2(verde) ou 3(vermelho)
+%para o arduino indicando qual led deverá ser aceso, após isso aguarda a
+%confirmação do arduino (um string) indicando que o LED desejado foi aceso;
+
+
+%Dados da porta serial do arduino:
+
 %BaudRate: 9600;
 %Bits de Dados: 8;
 %Paridade: Nenhuma;
-%Controle de Fluxo: Nenhum
+%1 bit e parada
 
-%Declarando a porta serial com BaudRate de 9600 bits/s
+clc;
 fclose(porta_serial);
-porta_serial = serial ('COM5', 'BaudRate',9600,'DataBits',8, 'TimeOut', 10 );
 
-%conecta o objeto porta_serial a porta física
+%Declarando um objeto porta serial com BaudRate de 9600 bits/s
+porta_serial = serial ('COM5', 'BaudRate', 9600, 'Timeout',2);
+
+
+n = input ('Escolha qual LED deseja acender (1(amarelo),2(verde) ou 3(vermelho)): ');
+
+
+%O parâmetro 'COM5' é o nome dado pelo windowa a porta serial do arduino,
+%quando o arduino é conectado ao computador. Esse nome varia de computador
+%para computador
+
+%Se as outras configurações como o a quantidade de bits de dado ou paridade
+%não são definidos durante a declaração da porta, essas configurações assumem
+%uma configuração padrão igual a configuração da porta serial do arduino,
+%portando não é necessário definir as outras configurações, pois fazendo
+%isso, já estamos configurando o objeto porta serial do matlab com as
+%mesmas configurações da porta serial do arduino;
+
+%conecta o objeto porta_serial a porta física 'COM5'
+%A partir da execução dessa linha a porta serial do arduino está reservada
+%a comunicar-se apenas com o matlab. Outras aplicações, como por exemplo
+%o Monitor Serial da IDE do Arduino não será capaz de se comunicar com o
+%arduino até que o matlab encerre a comuncação usando a função fclose;
 fopen(porta_serial);
 
-
-%Pausa de 2 segundos para que dê tempo que a serial do arduino inicialize.
-%Esse tempo de 2 segundos é arbitrário e uma solução melhor deve ser
-%procurada;
-%pause(2);
-
+%Esse laço alguarda que o arduino envie o string 'SIM' indicando que a
+%porta serial dele já foi inicializada e ele já é capaz de enviar e receber
+%dados
 while ( ~(strcmp (fscanf(porta_serial,'%s'),'SIM')) ) 
     disp ('Esperando SIM');
 end
-%fprintf (serial_porta,'%s','ACK');
 
-    
-    
+%escreve o caracter 'c' na porta serial  
+%fprintf(porta_serial, '%c','a'); 
 
-%fprintf(porta_serial, '%c','a'); %escreve o caracter 'c' na porta serial
-fwrite(porta_serial,[0],'uint8'); %escreve o número 1 na porta serial
-
+%escreve na porta_serial o vetor passado como segundo argumento.
+%O argumento 'uint8' significa que os elementos do vetor são números inteiros sme sinal de 8 bits  
+fwrite(porta_serial,[n],'uint8'); 
 
 %Espra a resposta do arduino
 while ( porta_serial.BytesAvailable == 0 )
-    disp ('No laço');
+    %disp ('ESPERANDO DADOS...');
 end
 
 %Lê a resposta do arduino
-dadosRecebidos = fread (porta_serial,1, 'uint8');
+%dadosRecebidos = fread (porta_serial,1, 'uint8'); %LÊ UM INTEIRO DE 8 BITS RECEBIDO ATRAVÉS DA SERIAL
+stringRecebido = fscanf(porta_serial,'%s'); %LÊ UM STRING RECEBIDO ATRAVÉS DA SERIAL
 
 %Exibe a resposta do arduino
-disp (dadosRecebidos);
-
-
+%disp (dadosRecebidos); %EXIBE UM INTEIRO DE 8 BITS DA SERIAL
+disp (stringRecebido); %EXIBE O STRING RECEBIDO ATRAVÉS DA SERIAL
 
 %desconecta o objeto porta_serial da porta serial COM3
 fclose(porta_serial);
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-% function[obj,flag] = setupSerial(comPort)
-% % It accept as the entry value, the index of the serial port
-% % Arduino is connected to, and as output values it returns the serial 
-% % element obj and a flag value used to check if when the script is compiled
-% % the serial element exists yet.
-% flag = 1;
-% % Initialize Serial object
-% obj = serial(comPort);
-% set(obj,'DataBits',8);
-% set(obj,'StopBits',1);
-% set(obj,'BaudRate',9600);
-% set(obj,'Parity','none');
-% fopen(obj);
-% a = 'b';
-% while (a~='a') 
-%     a=fread(obj,1,'uchar');
-% end
-% if (a=='a')
-%     disp('Serial read');
-% end
-% fprintf(obj,'%c','a');
-% mbox = msgbox('Serial Communication setup'); uiwait(mbox);
-% fscanf(obj,'%u');
-% end
