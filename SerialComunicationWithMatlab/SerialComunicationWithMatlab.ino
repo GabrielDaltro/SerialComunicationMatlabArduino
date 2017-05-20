@@ -11,18 +11,20 @@ void setup()
     pinMode(ledA, OUTPUT);
     pinMode(ledVERD, OUTPUT);
     pinMode(ledVERM, OUTPUT);
+    pinMode(13, OUTPUT);
 
     // Escreve 0 nos pinos conectados aos LED para garantir que ele iniciem apagados
     digitalWrite(ledA, LOW);   
     digitalWrite(ledVERD, LOW);    
     digitalWrite(ledVERM, LOW);   
+    digitalWrite (13,LOW);
 
     //Configura a porta serial para a taxa de transmissão de 9600 bits/s
     Serial.begin (9600);
 
    // Envia o string "SIM" para o matlab para indicar que a porta serial já foi incializada
    //Ao reeber "SIM", o matlab sabe que já pode enviar e receber dados do arduino
-    Serial.print ("SIM");             
+    Serial.println ("SIM");             
 }
 
 void loop()

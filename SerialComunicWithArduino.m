@@ -16,7 +16,7 @@
 %1 bit e parada
 
 clc;
-fclose(porta_serial);
+%fclose(porta_serial);
 
 %Declarando um objeto porta serial com BaudRate de 9600 bits/s
 porta_serial = serial ('COM5', 'BaudRate', 9600, 'Timeout',2);
@@ -25,7 +25,7 @@ porta_serial = serial ('COM5', 'BaudRate', 9600, 'Timeout',2);
 n = input ('Escolha qual LED deseja acender (1(amarelo),2(verde) ou 3(vermelho)): ');
 
 
-%O parâmetro 'COM5' é o nome dado pelo windowa a porta serial do arduino,
+%O parâmetro 'COM5' é o nome dado pelo windows a porta serial do arduino,
 %quando o arduino é conectado ao computador. Esse nome varia de computador
 %para computador
 
@@ -46,9 +46,18 @@ fopen(porta_serial);
 %Esse laço alguarda que o arduino envie o string 'SIM' indicando que a
 %porta serial dele já foi inicializada e ele já é capaz de enviar e receber
 %dados
-while ( ~(strcmp (fscanf(porta_serial,'%s'),'SIM')) ) 
-    disp ('Esperando SIM');
+a = (1 == 1);
+while (a)
+    if (porta_serial.BytesAvailable ~= 0)
+       disp ('tem byte'); 
+       if ( strcmp (fscanf(porta_serial,'%s'),'SIM'))
+         a = ~a;
+       end
+    end
 end
+%while ( ~(strcmp (fscanf(porta_serial,'%s'),'SIM')) ) 
+ %   disp ('Esperando SIM');
+%end
 
 %escreve o caracter 'c' na porta serial  
 %fprintf(porta_serial, '%c','a'); 
